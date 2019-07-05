@@ -26,3 +26,5 @@ class Protocol(models.Model):
     )
 
 
+    def __str__(self):
+        return "name : " , self.name ,"number : " , self.number
