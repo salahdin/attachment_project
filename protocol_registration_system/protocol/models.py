@@ -1,18 +1,15 @@
 from django.db import models
 
-# Create your models here.
+status_list=(
+    ('P','Pending'),
+    ('A','Approved'),
+    ('R','Rejected')
+)
 
-class Protocol(models.Model):
+class ProtocolRequest(models.Model):
 
     name = models.CharField(
-        verbose_name="name of protocol",
-        max_length=50,
-        null=False,
-        blank=False
-    )
-
-    number = models.IntegerField(
-        verbose_name="protocol number",
+        verbose_name="protocol name",
         max_length=50,
         null=False,
         blank=False
@@ -25,6 +22,29 @@ class Protocol(models.Model):
         blank=True
     )
 
+    pi_email = models.CharField(
+        verbose_name="PI email",
+        max_length=200,
+        null=False,
+        blank=False
+    )
+
 
     def __str__(self):
-        return "name : " , self.name ,"number : " , self.number
+        return self.name
+
+
+class ProtocolResponse(models.Model):
+    pq=models.ForeignKey(ProtocolRequest,on_delete=models.CASCADE,related_name="request")
+
+    status = models.CharField(
+        verbose_name="protocol status",
+        max_length=50,
+        choices=status_list
+    )
+
+    number = models.IntegerField(
+        verbose_name="protocol number",
+        null=False,
+        blank=True
+    )
