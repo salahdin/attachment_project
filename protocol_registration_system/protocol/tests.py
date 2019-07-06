@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Protocol
+from .models import ProtocolRequest
 from .form import ProtocolForm
 
 

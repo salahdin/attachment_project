@@ -35,7 +35,11 @@ class ProtocolRequest(models.Model):
 
 
 class ProtocolResponse(models.Model):
-    pq=models.ForeignKey(ProtocolRequest,on_delete=models.CASCADE,related_name="request")
+    pq=models.ForeignKey(
+        ProtocolRequest,
+        on_delete=models.CASCADE,
+        related_name="request"
+    )
 
     status = models.CharField(
         verbose_name="protocol status",
@@ -44,7 +48,7 @@ class ProtocolResponse(models.Model):
     )
 
     number = models.IntegerField(
-        verbose_name="protocol number",
+        verbose_name="assigned protocol number",
         null=False,
         blank=True
     )

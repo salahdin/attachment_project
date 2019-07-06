@@ -1,4 +1,5 @@
 from django.contrib import admin
-from .models import Protocol
+from .models import ProtocolResponse,ProtocolRequest
 # Register your models here.
-admin.site.register(Protocol)
+admin.site.register(ProtocolRequest)
+admin.site.register(ProtocolResponse)
