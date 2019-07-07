@@ -29,6 +29,9 @@ class ProtocolRequest(models.Model):
         blank=False
     )
 
+    request_date = models.DateField(
+        verbose_name="requested date"
+    )
 
     def __str__(self):
         return self.name
