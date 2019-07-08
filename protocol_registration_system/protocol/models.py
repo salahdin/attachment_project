@@ -25,6 +25,14 @@ class ProtocolRequest(models.Model):
         blank=True
     )
 
+    email = models.EmailField(
+        verbose_name="email",
+        max_length=200,
+        null=False,
+        blank=False,
+        validators=[validate_pi_email]
+    )
+
     pi_email = models.EmailField(
         verbose_name="PI email",
         max_length=200,
@@ -55,13 +63,37 @@ class ProtocolResponse(models.Model):
         default="P"
     )
 
-    number = models.IntegerField(
-        verbose_name="assigned protocol number",
-        null=False,
-        blank=True
-    )
-
 
     def __str__(self):
         return self.status
+
+
+class Protocol(models.Model):
+
+    name=models.CharField(
+        verbose_name="protocol name",
+        max_length=50
+    )
+
+    number = models.IntegerField(
+        verbose_name="assigned protocol number",
+        null=False,
+        blank=True,
+    )
+
+
+    approval_date=models.DateField(
+        verbose_name="date of approval",
+        null=False,
+    )
+
+
+
+
+
+
+
+
+
+
 
