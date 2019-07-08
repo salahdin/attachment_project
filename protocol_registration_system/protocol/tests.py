@@ -15,6 +15,6 @@ class MyTest(TestCase):
         self.assertFalse(form.is_valid())
     # testing email validator
     def test_ProtocolRequestForm_with_invalid_email(self):
-        form = ProtocolRequestForm(data={'name': "qwert", 'description': "sadfasdfasdf", 'pi_email': "salah@gmail", 'request_date':'2019-02-02'})
+        form = ProtocolRequestForm(data={'name': "qwert", 'description': "sadfasdfasdf", 'pi_email': "salah"})
         self.assertFalse(form.is_valid())
 
