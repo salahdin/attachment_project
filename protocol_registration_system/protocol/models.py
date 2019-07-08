@@ -6,6 +6,21 @@ status_list=(
     ('R','Rejected')
 )
 
+class ProtocolResponse(models.Model):
+    status = models.CharField(
+        verbose_name="protocol status",
+        max_length=50,
+        choices=status_list,
+        default="P"
+    )
+
+    number = models.IntegerField(
+        verbose_name="assigned protocol number",
+        null=False,
+        blank=True
+    )
+
+
 class ProtocolRequest(models.Model):
 
     name = models.CharField(
@@ -33,25 +48,13 @@ class ProtocolRequest(models.Model):
         verbose_name="requested date"
     )
 
-    def __str__(self):
-        return self.name
-
-
-class ProtocolResponse(models.Model):
-    pq=models.ForeignKey(
-        ProtocolRequest,
+    response=models.OneToOneField(
+        ProtocolResponse,
         on_delete=models.CASCADE,
         related_name="request"
     )
 
-    status = models.CharField(
-        verbose_name="protocol status",
-        max_length=50,
-        choices=status_list
-    )
+    def __str__(self):
+        return self.name
 
-    number = models.IntegerField(
-        verbose_name="assigned protocol number",
-        null=False,
-        blank=True
-    )
+
