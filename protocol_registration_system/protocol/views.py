@@ -4,12 +4,25 @@ from .form import ProtocolRequestForm
 from django.core.mail import send_mail
 from django.contrib import messages
 from .import email
-from .models import *
-# Create your views here.
+from .models import ProtocolRequest
+from django.views.generic.list import ListView
+
 
 # email api key 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
+
+
+class ProtocolRequestListView(ListView):
+    model = ProtocolRequest
+    paginate_by = 20
+    context_object_name = 'ProtocolRequest'
+    template_name = 'protocol/list.html'
+
+    def get_queryset(self):
+        return ProtocolRequest.objects.filter(request_date__lte=datetime.date.today()).order_by('-request_date')[:5]
+
+
+
 def apply(request):
-    passed=False
     if request.method == "POST":
         form = ProtocolRequestForm(request.POST)
         if form.is_valid():

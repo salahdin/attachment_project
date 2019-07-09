@@ -1,0 +1,9 @@
+{% extends 'templates/base.html' %}
+
+{% block content %}
+    {% for i in ProtocolRequest %}
+        <h3>{{i.name}}</h3>
+        <p>{{i.description}}</p>
+    {% endfor %}
+
+{%endblock%}

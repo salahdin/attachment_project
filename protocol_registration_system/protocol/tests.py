@@ -25,13 +25,24 @@ class ProtocolRequestTest(TestCase):
 class ProtocolApprovalTest(TestCase):
 
     def create_request(self):
-        return ProtocolRequestTest.objects.create(name="abc",
+     return ProtocolRequest.objects.create(name="abc",
                                            description="abc",
                                            email="abc@gmail.com", pi_email="abc@gmail.com", request_date="2019-02-02")
 
     def test_request_creation(self):
         a=self.create_request()
         self.assertTrue(isinstance(a, ProtocolRequest))
+
+
+    def test_request_approval(self):
+        p1 = Protocol.objects.all()
+        """
+                for i in p1:
+            res = i.response
+            self.assertEqual(res.status, "A")
+        """
+        [self.assertEqual(x.response.status, "A") for x in p1]
+
 
 
 

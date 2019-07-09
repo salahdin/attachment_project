@@ -1,5 +1,6 @@
 from django.db import models
-from .ProtocolResponse import *
+from .ProtocolResponse import ProtocolResponse
+from .ProtocolRequest import ProtocolRequest
 
 
 class Protocol(models.Model):
@@ -25,3 +26,4 @@ class Protocol(models.Model):
         on_delete=models.CASCADE,
         related_name="response",
     )
+

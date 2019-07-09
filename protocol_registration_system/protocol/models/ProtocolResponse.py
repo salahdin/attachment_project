@@ -1,5 +1,5 @@
 from django.db import models
-from .ProtocolRequest import *
+from .ProtocolRequest import ProtocolRequest
 
 status_list=(
     ('P', 'Pending'),
@@ -16,6 +16,7 @@ class ProtocolResponse(models.Model):
         related_name="request",
         null=True
     )
+
     status = models.CharField(
         verbose_name="protocol status",
         max_length=50,
@@ -29,3 +30,4 @@ class ProtocolResponse(models.Model):
 
     def __str__(self):
         return self.status
+
