@@ -4,7 +4,7 @@ from .form import ProtocolRequestForm
 from django.core.mail import send_mail
 from django.contrib import messages
 from .import email
-from .models import ProtocolRequest,ProtocolResponse
+from .models import ProtocolRequest, ProtocolResponse, Protocol
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
@@ -42,20 +42,10 @@ def apply(request):
         if form.is_valid():
             post=form.save(commit=False)
             post.request_date=datetime.date.today()#request_date inserted before saving
-
-            """
-            send_mail(
-                email.req_subject,
-                email.req_body,
-                "postmaster@sandboxceec9532622a40f297ed91245b14cb8c.mailgun.org",
-                [post.pi_email],
-                fail_silently=False
-            )
-            """
-
+            #email.send_email(post.pi_email)
             post.save()
             # create a response for the new
-            ProtocolResponse.objects.create(response=post,number=00)
+            ProtocolResponse.objects.create(protocolrequest=post,response_date=datetime.date.today())
             messages.success(request, 'Form submission successful!')
 
             return redirect('protocol:apply')
@@ -64,6 +54,42 @@ def apply(request):
         return render(request, 'protocol/index.html', {'form': form})
 
     
+def approve_request(request, id):
+    protocol_request = get_object_or_404(ProtocolRequest, pk=id)  # get current request object
+    protocol_response = protocol_request.request
 
-   
+    if request.method == 'POST':
+        # check if this instance is in the protocol list
+        if protocol_response.response is not None:
+            messages.success(request, 'already approved')
+            return redirect('protocol:protocol-request-list')
+
+        else:
+            # change the status of the response to approved
+            ProtocolResponse.objects.filter(pk=protocol_response.id).update(status='A')
+            # create a protocol instance
+            Protocol.objects.create(
+                name=protocol_request.name,
+                number=13,
+                approval_date=datetime.date.today(),
+                response=protocol_response
+            )
+            # email.send_email(protocol_request.pi_email) # send email to pi or user who made the request
+            # send email to pi or user who made the request
+
+            return redirect('protocol:protocol-request-list')
+
+    return render(request, 'protocol/detail.html', {'request': protocol_request})
+
+def reject_request(request , id):
+    pass
+
+
+
+
+
+
+
+
+
 

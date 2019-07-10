@@ -1,6 +1,20 @@
 from django.test import TestCase
 from .models import *
 from .form import ProtocolRequestForm
+from django.urls import reverse
+
+
+def create_request(self):
+    return ProtocolRequest.objects.create(name="abc",
+                                          description="abc",
+                                          email="abc@gmail.com", pi_email="abc@gmail.com", request_date="2019-02-02")
+
+
+def create_response(self):
+    return ProtocolResponse.objects.create(protocolrequest=create_request(self),
+                                           status="P",
+                                           response_date="2019-02-02"
+                                           )
 
 
 class ProtocolRequestTest(TestCase):
@@ -24,24 +38,36 @@ class ProtocolRequestTest(TestCase):
 
 class ProtocolApprovalTest(TestCase):
 
-    def create_request(self):
-     return ProtocolRequest.objects.create(name="abc",
-                                           description="abc",
-                                           email="abc@gmail.com", pi_email="abc@gmail.com", request_date="2019-02-02")
+    # creating a protocol request object
 
+    # testing if instant of type ProtocolRequest has been created
     def test_request_creation(self):
-        a=self.create_request()
+        a=create_request(self)
         self.assertTrue(isinstance(a, ProtocolRequest))
 
+    def test_response_creation(self):
+        a=create_response(self)
+        self.assertTrue(isinstance(a, ProtocolResponse))
 
+    # testing if all the protocol instances are approved
     def test_request_approval(self):
-        p1 = Protocol.objects.all()
-        """
-                for i in p1:
-            res = i.response
-            self.assertEqual(res.status, "A")
-        """
-        [self.assertEqual(x.response.status, "A") for x in p1]
+        [self.assertEqual(x.response.status, "A") for x in Protocol.objects.all()]
+
+
+class ProtocolRequestDetailViewTests(TestCase):
+
+    def test_detail_for_existing_request(self):
+        req = create_request(self)
+        url = reverse('protocol:protocol-request-detail', args=(req.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    # tests if page return a 404
+    def test_detail_for_non_existing_request(self):
+        req = create_request(self)
+        url = reverse('protocol:protocol-request-detail', args=(req.id+1,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
 
 

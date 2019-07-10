@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ProtocolResponse, ProtocolRequest
+from .models import ProtocolResponse, ProtocolRequest,Protocol
 
 
 class ProtocolResponseInline(admin.TabularInline):
@@ -14,9 +14,14 @@ class ProtocolRequestAdmin(admin.ModelAdmin):
 
 
 class ProtocolResponseAdmin(admin.ModelAdmin):
-    list_display = ('response', 'status')
+    list_display = ('protocolrequest', 'status')
     list_filter = ['status']
+
+class ProtocolAdmin(admin.ModelAdmin):
+    list_display = ('name', 'number', 'approval_date')
+    list_filter = ['approval_date']
 
 
 admin.site.register(ProtocolRequest, ProtocolRequestAdmin)
 admin.site.register(ProtocolResponse, ProtocolResponseAdmin)
+admin.site.register(Protocol,ProtocolAdmin)

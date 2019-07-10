@@ -5,7 +5,7 @@ from .ProtocolRequest import ProtocolRequest
 
 class Protocol(models.Model):
 
-    name=models.CharField(
+    name = models.CharField(
         verbose_name="protocol name",
         max_length=50
     )
@@ -16,7 +16,7 @@ class Protocol(models.Model):
         blank=True,
     )
 
-    approval_date=models.DateField(
+    approval_date = models.DateField(
         verbose_name="date of approval",
         null=False,
     )
