@@ -20,7 +20,7 @@ def create_response(self):
 class ProtocolRequestTest(TestCase):
     
     def test_ProtocolRequestForm_valid(self):
-        form = ProtocolRequestForm(data={'name': "qwert", 'description': "sadfasdfasdf",
+        form = ProtocolRequestForm(data={'name': "qwert", 'description': "sadfasdfasdf",'email':"salah@gmail.com",
                                          'pi_email': "salah@gmail.com", 'request_date': '2019-02-02'})
         self.assertTrue(form.is_valid())
 
