@@ -20,13 +20,13 @@ def create_response(self):
 class ProtocolRequestTest(TestCase):
     
     def test_ProtocolRequestForm_valid(self):
-        form = ProtocolRequestForm(data={'name': "qwert", 'description': "sadfasdfasdf",
+        form = ProtocolRequestForm(data={'name': "qwert", 'description': "sadfasdfasdf",'email':"salah@gmail.com",
                                          'pi_email': "salah@gmail.com", 'request_date': '2019-02-02'})
         self.assertTrue(form.is_valid())
 
     # Invalid Form Data
     def test_ProtocolRequestForm_invalid(self):
-        form = ProtocolRequestForm(data={'name': "", 'description': "sadfasdfasdf",
+        form = ProtocolRequestForm(data={'name': "", 'description': "sadfasdfasdf",'email':"salah@gmail.com",
                                          'pi_email': "salah@gmail.com", 'request_date': 'A'})
         self.assertFalse(form.is_valid())
 
@@ -39,7 +39,8 @@ class ProtocolRequestTest(TestCase):
 class ProtocolApprovalTest(TestCase):
 
     # creating a protocol request object
-
+    def setUp(self):
+        pass
     # testing if instant of type ProtocolRequest has been created
     def test_request_creation(self):
         a=create_request(self)
@@ -52,6 +53,14 @@ class ProtocolApprovalTest(TestCase):
     # testing if all the protocol instances are approved
     def test_request_approval(self):
         [self.assertEqual(x.response.status, "A") for x in Protocol.objects.all()]
+
+    def test_duplicate_protocol_number(self):
+        no_dup=set()
+        a=Protocol.objects.all()
+        for i in a:
+            no_dup.add(i.number)
+        self.assertEqual(no_dup,len(a))
+
 
 
 class ProtocolRequestDetailViewTests(TestCase):

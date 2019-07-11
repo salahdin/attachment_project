@@ -1,7 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 import datetime 
 from .form import ProtocolRequestForm
-from django.core.mail import send_mail
 from django.contrib import messages
 from .import email
 from .models import ProtocolRequest, ProtocolResponse, Protocol
@@ -12,12 +11,12 @@ from django.views.generic.detail import DetailView
 
 class ProtocolRequestListView(ListView):
     model = ProtocolRequest
-    paginate_by = 5
+    paginate_by = 20
     context_object_name = 'ProtocolRequest'
     template_name = 'protocol/list.html'
 
     def get_queryset(self):
-        return ProtocolRequest.objects.filter(request_date__lte=datetime.date.today()).order_by('-request_date')[:5]
+        return ProtocolRequest.objects.filter(request_date__lte=datetime.date.today()).order_by('-request_date')
 
 
 class ProtocolRequestDetailView(DetailView):
@@ -65,11 +64,11 @@ def approve_request(request, id):
             # create a protocol instance
             Protocol.objects.create(
                 name=protocol_request.name,
-                number=13,
+                number=11,
                 approval_date=datetime.date.today(),
                 response=protocol_response
             )
-            # email.send_email(protocol_request.pi_email) # send email to pi or user who made the request
+            # email.send_email(protocol_request.pi_email,Approved=True,response=True) # send email to pi or user who made the request
             # send email to pi or user who made the request
             messages.success(request, 'approved!!')
             return redirect('protocol:protocol-request-list')
@@ -78,7 +77,19 @@ def approve_request(request, id):
 
 
 def reject_request(request , id):
-    pass
+    protocol_request = get_object_or_404(ProtocolRequest, pk=id)  # get current request object
+    protocol_response = protocol_request.request
+    if request.method == 'POST':
+        ProtocolResponse.objects.filter(pk=protocol_response.id).update(status='R')
+        # email.send_email(protocol_request.pi_email,Approved=False,response=True) # send email to pi or user who made the request
+    return render(request, 'protocol/detail.html', {'request': protocol_request})
+
+
+
+
+    
+
+    
 
 
 

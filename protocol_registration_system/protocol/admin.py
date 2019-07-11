@@ -8,7 +8,7 @@ class ProtocolResponseInline(admin.TabularInline):
 
 class ProtocolRequestAdmin(admin.ModelAdmin):
     inlines = [ProtocolResponseInline]
-    list_display = ('name', 'description', 'pi_email', 'request_date')
+    list_display = ('name', 'snippet', 'pi_email', 'request_date')
     list_filter = ['request_date']
     search_fields = ['name']
 
