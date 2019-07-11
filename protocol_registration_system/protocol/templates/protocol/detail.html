@@ -5,14 +5,23 @@
     <h3>{{object.name}}</h3>
     <p>{{object.description}}</p>
     {% if object.request.status == "P" %}
-    <p>Pending</p>
-    {% endif %}
+        <p>Pending</p>
+        <form action="{% url 'protocol:approve' object.id %}" method="post" >
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success" style="display:inline-block";>Approve</button>
+        </form>
 
-    <form action="{% url 'protocol:approve' object.id %}" method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-success">Approve</button>
-    </form>
+        <form action="{% url 'protocol:reject' object.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" >Reject</button>
+        </form>
+
+    {% endif %}
+    {% if object.request.status == "A" %}
+        <p style="color: green">Approved</p>
+    {%endif%}
+    
+    
 
 {% if messages %}
     <ul class="messages" style="color:green;">

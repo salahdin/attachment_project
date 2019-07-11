@@ -11,12 +11,14 @@
         </tr>
     {% for i in ProtocolRequest %}
 
+            {% if i.request.status != "R" %}
             <tr>
                 <td><a href="{% url 'protocol:protocol-request-detail' id=i.id %}">{{ i.id }}</a></td>
                 <td>{{i.name}}</td>
                 <td>{{i.email}}</td>
                 <td>{{i.pi_email}}</td>
             </tr>
+            {%endif%}
     {% endfor %}
     </table>
 

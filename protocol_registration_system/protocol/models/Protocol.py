@@ -1,7 +1,7 @@
 from django.db import models
 from .ProtocolResponse import ProtocolResponse
 from .ProtocolRequest import ProtocolRequest
-
+from  ..validators import *
 
 class Protocol(models.Model):
 
@@ -14,9 +14,10 @@ class Protocol(models.Model):
         verbose_name="assigned protocol number",
         null=False,
         blank=True,
+        validators=[validate_protocol_number]
     )
 
-    approval_date = models.DateField(
+    approval_date = models.DateTimeField(
         verbose_name="date of approval",
         null=False,
     )
