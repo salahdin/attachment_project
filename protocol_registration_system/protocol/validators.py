@@ -18,6 +18,8 @@ def validate_protocol_number(value):
     else:
         return value
 
-def validate_protocol_request_date(value):
-    if value > datetime.date.today():
-        raise
+def validate_protocol_request_dateupto(value):
+    if value < datetime.date.today():
+        raise ValidationError('invalid date.')
+    else:
+        return value
