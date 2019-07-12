@@ -39,6 +39,11 @@ def apply(request):
             post = form.save(commit=False)
             post.request_date = datetime.date.today()  # request_date inserted before saving
             # email.send_email(post.pi_email)
+            if post.durationFrom > post.durationUpto:
+                messages.error(request, 'wrong date')
+                return redirect('protocol:apply')
+            else:
+                post.duration = -(post.durationFrom - post.durationUpto)
             post.save()
             # create a response for the new
             ProtocolResponse.objects.create(protocolrequest=post,response_date=datetime.date.today())
@@ -49,7 +54,7 @@ def apply(request):
         form = ProtocolRequestForm()
         return render(request, 'protocol/index.html', {'form': form})
 
-@login_required
+@login_required(login_url='accounts/login')
 def approve_request(request, id):
     protocol_request = get_object_or_404(ProtocolRequest, pk=id)  # get current request object
     protocol_response = protocol_request.request
@@ -77,7 +82,7 @@ def approve_request(request, id):
 
     return render(request, 'protocol/detail.html', {'request': protocol_request})
 
-@login_required
+@login_required(login_url='accounts/login')
 def reject_request(request, id):
     protocol_request = get_object_or_404(ProtocolRequest, pk=id)  # get current request object
     protocol_response = protocol_request.request

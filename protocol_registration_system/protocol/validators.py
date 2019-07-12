@@ -1,6 +1,7 @@
 from django.core.validators import EmailValidator
 from django.core.exceptions import ValidationError
 from .models import Protocol
+import datetime
 
 def validate_pi_email(value):
     try:
@@ -11,8 +12,12 @@ def validate_pi_email(value):
     return value
 
 def validate_protocol_number(value):
-    list = [x.number for x in Protocol.objects.all()]
-    if value in list:
+    lst = [x.number for x in Protocol.objects.all()]
+    if value in lst:
         raise ValidationError('number already taken.')
     else:
         return value
+
+def validate_protocol_request_date(value):
+    if value > datetime.date.today():
+        raise

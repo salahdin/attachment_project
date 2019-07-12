@@ -63,8 +63,7 @@ class ProtocolApprovalTest(TestCase):
         a=Protocol.objects.all()
         for i in a:
             no_dup.add(i.number)
-        #self.assertEqual(no_dup, len(a))
-
+        self.assertEqual(no_dup, len(a))
 
 
 
