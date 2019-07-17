@@ -1,32 +1,42 @@
 from django.test import TestCase
-from .models import Protocol,ProtocolRequest,ProtocolResponse
+from .models import Protocol
+from .models import ProtocolRequest
+from .models import ProtocolResponse
 from .form import ProtocolRequestForm
 from django.urls import reverse
-from .import views
+from .approvalManager import *
+from . import views
+from faker import Faker
 
 
-def create_request(self):
+fake = Faker()
+def create_request():
     return ProtocolRequest.objects.create(name="abc",
                                           description="abc",
-                                          email="abc@gmail.com", pi_email="abc@gmail.com", request_date="2019-02-02")
+                                          email="abc@gmail.com", pi_email="abc@gmail.com",
+                                          request_date="2019-02-02",
+                                          durationFrom="2019-02-02",
+                                          durationUpto="2019-02-02"
+                                          )
 
 
-def create_response(self):
-    return ProtocolResponse.objects.create(protocolrequest=create_request(self),
+def create_response():
+    return ProtocolResponse.objects.create(protocolrequest=create_request(),
                                            status="P",
                                            response_date="2019-02-02"
                                            )
 
+
 class ProtocolRequestTest(TestCase):
-    
+
     def test_ProtocolRequestForm_valid(self):
-        form = ProtocolRequestForm(data={'name': "qwert", 'description': "sadfasdfasdf",'email':"salah@gmail.com",
+        form = ProtocolRequestForm(data={'name': "qwert", 'description': "sadfasdfasdf", 'email': "salah@gmail.com",
                                          'pi_email': "salah@gmail.com", 'request_date': '2019-02-02'})
         self.assertTrue(form.is_valid())
 
     # Invalid Form Data
     def test_ProtocolRequestForm_invalid(self):
-        form = ProtocolRequestForm(data={'name': "", 'description': "sadfasdfasdf",'email':"salah@gmail.com",
+        form = ProtocolRequestForm(data={'name': "", 'description': "sadfasdfasdf", 'email': "salah@gmail.com",
                                          'pi_email': "salah@gmail.com", 'request_date': 'A'})
         self.assertFalse(form.is_valid())
 
@@ -40,18 +50,17 @@ class ProtocolApprovalTest(TestCase):
 
     # creating a protocol request object
     def setUp(self):
-        rq=create_request(self)
-        rs=create_response(self)
-        reverse('protocol:approve', args=(rq.id,))
-
+        rs = create_response()
+        rq = rs.protocolrequest
+        approve(rq.id)
 
     # testing if instant of type ProtocolRequest has been created
     def test_request_creation(self):
 
-        self.assertTrue(isinstance(create_request(self), ProtocolRequest))
+        self.assertTrue(isinstance(create_request(), ProtocolRequest))
 
     def test_response_creation(self):
-        a=create_response(self)
+        a = create_response()
         self.assertTrue(isinstance(a, ProtocolResponse))
 
     # testing if all the protocol instances are approved
@@ -59,30 +68,24 @@ class ProtocolApprovalTest(TestCase):
         [self.assertEqual(x.response.status, "A") for x in Protocol.objects.all()]
 
     def test_duplicate_protocol_number(self):
-        no_dup=set()
-        a=Protocol.objects.all()
+        no_dup = set()
+        a = Protocol.objects.all()
         for i in a:
             no_dup.add(i.number)
         self.assertEqual(no_dup, len(a))
 
 
-
-
 class ProtocolRequestDetailViewTests(TestCase):
 
     def test_detail_for_existing_request(self):
-        req = create_request(self)
+        req = create_request()
         url = reverse('protocol:protocol-request-detail', args=(req.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     # tests if page return a 404
     def test_detail_for_non_existing_request(self):
-        req = create_request(self)
-        url = reverse('protocol:protocol-request-detail', args=(req.id+1,))
+        req = create_request()
+        url = reverse('protocol:protocol-request-detail', args=(req.id + 1,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
-
-
-
-

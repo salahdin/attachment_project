@@ -6,8 +6,9 @@ from .import email
 from .models import ProtocolRequest, ProtocolResponse, Protocol
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from .approvalManager import assignnum
+from .approvalManager import assignnum,approve
 from django.contrib.auth.decorators import login_required
+
 # email api key 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
 
 #@login_required
@@ -56,31 +57,9 @@ def apply(request):
 
 @login_required(login_url='accounts/login')
 def approve_request(request, id):
-    protocol_request = get_object_or_404(ProtocolRequest, pk=id)  # get current request object
-    protocol_response = protocol_request.request
-
     if request.method == 'POST':
-        # check if this instance is in the protocol list
-        if protocol_response.status == "A":
-            messages.success(request, 'already approved')
-            return redirect('protocol:protocol-request-list')
+        approve(id)
 
-        else:
-            # change the status of the response to approved
-            ProtocolResponse.objects.filter(pk=protocol_response.id).update(status='A')
-            # create a protocol instance
-            Protocol.objects.create(
-                name=protocol_request.name,
-                number=assignnum(),
-                approval_date=datetime.datetime.now(),
-                response=protocol_response
-            )
-            # email.send_email(protocol_request.pi_email,Approved=True,response=True) # send email to pi or user who made the request
-            # send email to pi or user who made the request
-            messages.success(request, 'approved!!')
-            return redirect('protocol:protocol-request-list')
-
-    return render(request, 'protocol/detail.html', {'request': protocol_request})
 
 @login_required(login_url='accounts/login')
 def reject_request(request, id):
