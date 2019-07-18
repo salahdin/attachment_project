@@ -11,8 +11,4 @@ class ProtocolRequestForm(forms.ModelForm):
 
     class Meta:
         model=ProtocolRequest
-        fields=['name', 'description', 'email', 'pi_email', 'durationFrom', 'durationUpto']
-        widgets = {
-            'durationFrom': DateInput(),
-            'durationUpto': DateInput(),
-        }
+        fields=['name', 'description', 'email', 'pi_email', 'duration']

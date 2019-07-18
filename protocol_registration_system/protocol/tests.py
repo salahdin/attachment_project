@@ -4,18 +4,17 @@ from .models import ProtocolRequest
 from .models import ProtocolResponse
 from .form import ProtocolRequestForm
 from django.urls import reverse
-from .approvalManager import *
+from .approvalManager import ApproveProtocol
 from faker import Faker
 
 
 fake = Faker()
+ap = ApproveProtocol()
 def create_request():
     return ProtocolRequest.objects.create(name="abc",
                                           description=fake.text(),
                                           email=fake.email(), pi_email=fake.email(),
                                           request_date="2019-02-02",
-                                          durationFrom="2019-02-02",
-                                          durationUpto=fake.date_this_month(before_today=False, after_today=True)
                                           )
 
 
@@ -52,17 +51,22 @@ class ProtocolApprovalTest(TestCase):
         for i in range(50):
             rq = create_request()
             rs = create_response(rq)
-            approve(rq)
+            ap.approve(rq)
 
     # testing if instant of type ProtocolRequest has been created
     def test_request_creation(self):
         options = {
             'name': 'BCPP',
-
+            'description': 'this is a description',
+            'email': 'bhcp@gmail.com',
+            'pi_email': 'bhcp@gmail.com',
+            'request_date': '2019-02-02'
         }
         protocol_request = ProtocolRequest.objects.create(**options)
-
-        ap = ApproveProtocol
+        ap.approve(protocol_request)
+        protocol_response = protocol_request.request
+        self.assertTrue(isinstance(protocol_response, ProtocolResponse))
+        self.assertTrue(isinstance(protocol_response.response, Protocol))
 
 
     def test_response_creation(self):

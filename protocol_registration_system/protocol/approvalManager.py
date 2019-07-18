@@ -1,7 +1,9 @@
 from .models import ProtocolResponse, ProtocolRequest, Protocol
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
-
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+import datetime
 
 class ApproveProtocol:
 
@@ -30,11 +32,18 @@ class ApproveProtocol:
         protocol_response = protocol_request.request
         # check if this instance is in the protocol list
         if protocol_response.status == "A":
-            return redirect('protocol:protocol-request-list')
+            messages.success("protocol already approved")
 
         else:
             # change the status of the response to approved
-            ProtocolResponse.objects.filter(pk=protocol_response.id).update(status='A')
+            try:
+                ProtocolResponse.objects.filter(pk=protocol_response.id).update(status='A')
+            except ObjectDoesNotExist:
+                ProtocolResponse.objects.create(protocolrequest=protocol_request,
+                                                status="A",
+                                                response_date=datetime.date.today()
+                                                )
+
             # create a protocol instance
             Protocol.objects.create(
                 name=protocol_request.name,

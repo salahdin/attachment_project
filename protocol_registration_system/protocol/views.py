@@ -6,7 +6,7 @@ from .import email
 from .models import ProtocolRequest, ProtocolResponse, Protocol
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from .approvalManager import assignnum,approve
+from .approvalManager import ApproveProtocol
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
@@ -40,11 +40,6 @@ def apply(request):
             post = form.save(commit=False)
             post.request_date = timezone.now()  # request_date inserted before saving
             # email.send_email(post.pi_email)
-            if post.durationFrom > post.durationUpto:
-                messages.error(request, 'wrong date')
-                return redirect('protocol:apply')
-            else:
-                post.duration = -(post.durationFrom - post.durationUpto)
             post.save()
             # create a response for the new
             ProtocolResponse.objects.create(protocolrequest=post,response_date=datetime.date.today())
@@ -60,7 +55,7 @@ def apply(request):
 def approve_request(request, id):
     protocol_request = get_object_or_404(ProtocolRequest,pk=id)
     if request.method == 'POST':
-        approve(protocol_request)
+        ApproveProtocol.approve(protocol_request)
         return redirect('protocol:protocol-request-list')
     return render(request, 'protocol/detail.html', {'protocol': protocol_request})
 
