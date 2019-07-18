@@ -56,7 +56,14 @@ class ProtocolApprovalTest(TestCase):
 
     # testing if instant of type ProtocolRequest has been created
     def test_request_creation(self):
-        self.assertTrue(isinstance(create_request(), ProtocolRequest))
+        options = {
+            'name': 'BCPP',
+
+        }
+        protocol_request = ProtocolRequest.objects.create(**options)
+
+        ap = ApproveProtocol
+
 
     def test_response_creation(self):
         rq = create_request()

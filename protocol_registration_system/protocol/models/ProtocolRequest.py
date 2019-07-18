@@ -43,18 +43,6 @@ class ProtocolRequest(models.Model):
         blank=True
     )
 
-    durationFrom = models.DateField(
-        verbose_name="start of study",
-        null=True,
-        blank=True
-    )
-
-    durationUpto = models.DateField(
-        verbose_name="end of study",
-        null=True,
-        blank=True
-    )
-
     def __str__(self):
         return self.name
 
