@@ -5,23 +5,22 @@ from .models import ProtocolResponse
 from .form import ProtocolRequestForm
 from django.urls import reverse
 from .approvalManager import *
-from . import views
 from faker import Faker
 
 
 fake = Faker()
 def create_request():
     return ProtocolRequest.objects.create(name="abc",
-                                          description="abc",
-                                          email="abc@gmail.com", pi_email="abc@gmail.com",
+                                          description=fake.text(),
+                                          email=fake.email(), pi_email=fake.email(),
                                           request_date="2019-02-02",
                                           durationFrom="2019-02-02",
-                                          durationUpto="2019-02-02"
+                                          durationUpto=fake.date_this_month(before_today=False, after_today=True)
                                           )
 
 
-def create_response():
-    return ProtocolResponse.objects.create(protocolrequest=create_request(),
+def create_response(rq):
+    return ProtocolResponse.objects.create(protocolrequest=rq,
                                            status="P",
                                            response_date="2019-02-02"
                                            )
@@ -50,17 +49,18 @@ class ProtocolApprovalTest(TestCase):
 
     # creating a protocol request object
     def setUp(self):
-        rs = create_response()
-        rq = rs.protocolrequest
-        approve(rq.id)
+        for i in range(50):
+            rq = create_request()
+            rs = create_response(rq)
+            approve(rq)
 
     # testing if instant of type ProtocolRequest has been created
     def test_request_creation(self):
-
         self.assertTrue(isinstance(create_request(), ProtocolRequest))
 
     def test_response_creation(self):
-        a = create_response()
+        rq = create_request()
+        a = create_response(rq)
         self.assertTrue(isinstance(a, ProtocolResponse))
 
     # testing if all the protocol instances are approved
@@ -72,8 +72,7 @@ class ProtocolApprovalTest(TestCase):
         a = Protocol.objects.all()
         for i in a:
             no_dup.add(i.number)
-        self.assertEqual(no_dup, len(a))
-
+        self.assertEqual(len(no_dup), len(a))
 
 class ProtocolRequestDetailViewTests(TestCase):
 

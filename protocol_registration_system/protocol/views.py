@@ -8,20 +8,20 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from .approvalManager import assignnum,approve
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 # email api key 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
 
-#@login_required
+
+# @login_required
 class ProtocolRequestListView(ListView):
     model = ProtocolRequest
     paginate_by = 20
     context_object_name = 'ProtocolRequest'
     template_name = 'protocol/list.html'
 
-    def get_queryset(self):
-        return ProtocolRequest.objects.filter(request_date__lte=datetime.date.today()).order_by('-request_date')
 
-#@login_required
+# @login_required
 class ProtocolRequestDetailView(DetailView):
 
     template_name = 'protocol/detail.html'
@@ -29,7 +29,7 @@ class ProtocolRequestDetailView(DetailView):
 
     def get_object(self):
         id_ = self.kwargs.get("id")
-        return get_object_or_404(ProtocolRequest,id=id_)
+        return get_object_or_404(ProtocolRequest, id=id_)
 
 
 def apply(request):
@@ -38,7 +38,7 @@ def apply(request):
 
         if form.is_valid():
             post = form.save(commit=False)
-            post.request_date = datetime.date.today()  # request_date inserted before saving
+            post.request_date = timezone.now()  # request_date inserted before saving
             # email.send_email(post.pi_email)
             if post.durationFrom > post.durationUpto:
                 messages.error(request, 'wrong date')
@@ -55,10 +55,14 @@ def apply(request):
         form = ProtocolRequestForm()
         return render(request, 'protocol/index.html', {'form': form})
 
+
 @login_required(login_url='accounts/login')
 def approve_request(request, id):
+    protocol_request = get_object_or_404(ProtocolRequest,pk=id)
     if request.method == 'POST':
-        approve(id)
+        approve(protocol_request)
+        return redirect('protocol:protocol-request-list')
+    return render(request, 'protocol/detail.html', {'protocol': protocol_request})
 
 
 @login_required(login_url='accounts/login')

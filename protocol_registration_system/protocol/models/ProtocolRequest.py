@@ -32,7 +32,7 @@ class ProtocolRequest(models.Model):
         blank=False,
     )
 
-    request_date = models.DateField(
+    request_date = models.DateTimeField(
         verbose_name="requested date"
     )
 
@@ -61,4 +61,6 @@ class ProtocolRequest(models.Model):
     def snippet(self):
         return self.description[:25]
 
+    class Meta:
+        ordering = ['-request_date']
 
